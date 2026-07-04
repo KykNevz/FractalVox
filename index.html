@@ -1170,7 +1170,49 @@
       <div class="fx-modal" id="fx-modal"></div>
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+  /* ============================================================
+     CONFIGURAÇÃO DO SUPABASE
+     Preencha estes 3 valores conforme o guia de configuração:
+     - SUPABASE_URL e SUPABASE_ANON_KEY: painel do Supabase em
+       Settings → API Keys (Project URL + chave "anon" / "publishable").
+       É seguro deixar essa chave visível no HTML: ela só tem o acesso
+       que as regras de RLS da tabela permitirem.
+     - ADMIN_EMAIL: o e-mail que você vai cadastrar em Authentication →
+       Users no Supabase. É com esse e-mail (+ a senha que você definir
+       lá) que o modo admin deste site vai logar por baixo dos panos.
+     ============================================================ */
+  const SUPABASE_URL = 'https://iklvbvadyqwzrfcjzlcv.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_q0YbVu1Tg109he594kMh4w_xZmSjb-D';
+  const ADMIN_EMAIL = 'kyknevz@gmail.com';
+  const FX_TABLE = 'fx_data';
+
+  const _supabase = (typeof window !== 'undefined' && window.supabase && !SUPABASE_URL.includes('SEU-PROJETO'))
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    : null;
+
+  let fxAdminCached = false;
+
+  async function fxRefreshAdminSession() {
+    if (!_supabase) {
+      fxAdminCached = false;
+      return;
+    }
+    const {
+      data
+    } = await _supabase.auth.getSession();
+    fxAdminCached = !!(data && data.session);
+  }
+
+  if (_supabase) {
+    _supabase.auth.onAuthStateChange((_event, session) => {
+      fxAdminCached = !!session;
+      fxApplyAdminUI();
+      fxRenderNav();
+    });
+  }
+
   const ICON = {
     play: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>',
     x: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>',
@@ -1268,28 +1310,27 @@
   }
 
   /* ---------- Persistence ----------
-     Este site é hospedado como HTML estático (GitHub Pages), então não existe
-     um banco de dados compartilhado de verdade. O funcionamento é assim:
+     Os dados públicos e privados vivem numa tabela do Supabase chamada
+     "fx_data" (uma linha por chave: sponsored, watched, games, schedule,
+     platforms, hero, content). Fluxo:
 
-     1) Ao carregar, a página tenta buscar o arquivo "fx-data.json" (que fica
-        ao lado do index.html no seu repositório). É esse arquivo que TODO
-        VISITANTE vê — os catálogos públicos (Patrocinados, Assistidos,
-        Jogados, Cronograma).
-     2) No SEU navegador (depois de entrar no modo admin), suas edições ficam
-        salvas no localStorage por baixo dos panos. Elas têm prioridade sobre
-        o fx-data.json enquanto você não "publicar" (ver fxExportPublicData).
-     3) A aba Conteúdos NUNCA é lida do fx-data.json nem exportada nele — ela
-        vive só no localStorage do seu navegador. Ou seja: mesmo que alguém
-        abra o código-fonte da página, os dados de Conteúdos simplesmente não
-        estão lá para visitantes, porque nunca chegam a ser publicados.
-     4) Se estiver rodando dentro de um artifact do Claude (que tem
-        window.storage), os dados também são sincronizados lá como camada
-        extra — isso não afeta o funcionamento no seu domínio próprio. */
+     1) Ao carregar, a página busca todas as linhas dessa tabela.
+     2) Toda edição feita em modo admin (fxSave) grava direto nessa tabela —
+        por isso aparece pra qualquer visitante na hora, sem precisar
+        baixar/gerar nenhum arquivo nem subir nada pro GitHub manualmente.
+     3) A página também assina "Realtime" da tabela: quando você salva algo
+        (mesmo de outro navegador/celular), qualquer aba já aberta do site
+        recebe a atualização e redesenha sozinha, sem precisar de F5.
+     4) A chave "content" (aba Conteúdos) é protegida por Row Level Security
+        no Supabase: só uma sessão autenticada como admin consegue ler ou
+        escrever essa linha. Visitantes comuns nem recebem esse dado na
+        resposta da API — não é só escondido na tela, é bloqueado no servidor.
+     5) Um cache em localStorage é mantido só como rede de segurança (por
+        exemplo, se a internet cair no meio da visita, ou antes de você
+        terminar a configuração do Supabase). */
   const FX_STORAGE_PREFIX = 'fractalvox:';
   const FX_PUBLIC_KEYS = ['sponsored', 'watched', 'games', 'schedule', 'platforms', 'hero'];
   const FX_PRIVATE_KEYS = ['content'];
-  const fxHasClaudeStorage = () => (typeof window !== 'undefined' && window.storage && typeof window.storage.get ===
-    'function');
 
   function fxLocalGet(key) {
     try {
@@ -1305,48 +1346,81 @@
       localStorage.setItem(FX_STORAGE_PREFIX + key, JSON.stringify(value));
       return true;
     } catch (e) {
-      console.error('Falha ao salvar localmente:', e);
+      console.error('Falha ao salvar cache local:', e);
       return false;
     }
   }
 
-  /** Busca o arquivo público publicado no seu domínio. Retorna null se não existir
-      (por exemplo, ao rodar localmente antes da primeira publicação). */
-  async function fxFetchPublicData() {
-    try {
-      const res = await fetch('./fx-data.json', {
-        cache: 'no-store'
-      });
-      if (!res.ok) return null;
-      return await res.json();
-    } catch (e) {
-      return null;
+  /** Aplica uma linha vinda do Supabase (carregamento inicial ou evento
+      em tempo real) ao estado da página e redesenha só a parte afetada. */
+  function fxApplyRemoteRow(key, value) {
+    if (value == null) return;
+    state[key] = value;
+    fxLocalSet(key, value);
+    switch (key) {
+      case 'hero':
+        fxRenderHero();
+        break;
+      case 'schedule':
+        fxRenderWeek();
+        break;
+      case 'platforms':
+        fxRenderPlatformFilter();
+        break;
+      case 'sponsored':
+        fxRenderGrid('sponsored');
+        break;
+      case 'watched':
+        fxRenderGrid('watched');
+        fxRenderWatchedFilters();
+        break;
+      case 'games':
+        fxRenderGrid('games');
+        fxRenderGamesFilters();
+        break;
+      case 'content':
+        fxRenderGrid('content');
+        break;
     }
   }
 
   async function fxLoad() {
-    const publicData = await fxFetchPublicData();
+    await fxRefreshAdminSession();
 
-    for (const k of FX_PUBLIC_KEYS) {
-      // Prioridade: rascunho local (se você já editou algo neste navegador) > arquivo publicado > valor padrão.
-      const local = fxLocalGet(k);
-      if (local != null) {
-        state[k] = local;
-      } else if (publicData && publicData[k] != null) {
-        state[k] = publicData[k];
+    if (_supabase) {
+      try {
+        const {
+          data,
+          error
+        } = await _supabase.from(FX_TABLE).select('key,value');
+        if (error) throw error;
+        (data || []).forEach(row => {
+          state[row.key] = row.value;
+          fxLocalSet(row.key, row.value);
+        });
+      } catch (e) {
+        console.error('Não deu para carregar do Supabase, usando cache local:', e);
+        [...FX_PUBLIC_KEYS, ...FX_PRIVATE_KEYS].forEach(k => {
+          const local = fxLocalGet(k);
+          if (local != null) state[k] = local;
+        });
       }
-    }
-    for (const k of FX_PRIVATE_KEYS) {
-      const local = fxLocalGet(k);
-      if (local != null) state[k] = local;
-    }
-    if (fxHasClaudeStorage()) {
-      for (const k of [...FX_PUBLIC_KEYS, ...FX_PRIVATE_KEYS]) {
-        try {
-          const r = await window.storage.get('fx-' + k, false);
-          if (r && r.value != null) state[k] = JSON.parse(r.value);
-        } catch (e) {}
-      }
+
+      _supabase.channel('fx_data_live')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: FX_TABLE
+        }, (payload) => {
+          const row = (payload.new && Object.keys(payload.new).length) ? payload.new : payload.old;
+          if (row && row.key) fxApplyRemoteRow(row.key, payload.eventType === 'DELETE' ? null : row.value);
+        })
+        .subscribe();
+    } else {
+      [...FX_PUBLIC_KEYS, ...FX_PRIVATE_KEYS].forEach(k => {
+        const local = fxLocalGet(k);
+        if (local != null) state[k] = local;
+      });
     }
 
     if (!state.platforms || !state.platforms.length) state.platforms = ['TikTok', 'Instagram', 'YouTube', 'Cinefy'];
@@ -1364,10 +1438,22 @@
 
   async function fxSave(key) {
     fxLocalSet(key, state[key]);
-    if (fxHasClaudeStorage()) {
-      try {
-        await window.storage.set('fx-' + key, JSON.stringify(state[key]), false);
-      } catch (e) {}
+    if (!_supabase) {
+      console.warn('Supabase não configurado — a mudança ficou só neste navegador.');
+      return;
+    }
+    try {
+      const {
+        error
+      } = await _supabase.from(FX_TABLE).upsert({
+        key,
+        value: state[key],
+        updated_at: new Date().toISOString()
+      });
+      if (error) throw error;
+    } catch (e) {
+      console.error('Erro ao salvar no Supabase:', e);
+      alert('Não foi possível salvar no banco de dados agora (veja o console para detalhes). A mudança ficou só neste navegador por enquanto.');
     }
   }
 
@@ -1380,17 +1466,8 @@
      bastante conhecimento técnico e determinação ainda poderia abrir o console do
      navegador e chamar as funções diretamente. Para um site pessoal isso costuma
      ser suficiente; se um dia precisar de segurança real, isso exige um backend. */
-  const ADMIN_HASH_KEY = FX_STORAGE_PREFIX + 'admin-hash';
-  const ADMIN_SESSION_KEY = FX_STORAGE_PREFIX + 'is-admin';
-
-  async function fxHash(text) {
-    const data = new TextEncoder().encode(text);
-    const digest = await crypto.subtle.digest('SHA-256', data);
-    return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-
   function fxIsAdmin() {
-    return localStorage.getItem(ADMIN_SESSION_KEY) === 'true';
+    return fxAdminCached;
   }
 
   /** Mostra/esconde tudo que só o dono pode ver ou usar (botões de adicionar,
@@ -1422,60 +1499,45 @@
   }
 
   async function fxOpenAdminLogin(errorMsg) {
-    const hasPassword = !!localStorage.getItem(ADMIN_HASH_KEY);
-    if (!hasPassword) {
+    if (!_supabase) {
       fxOpenModal(`<div class="fx-modal-body">
-          <h3 class="fx-modal-title">Criar senha de administrador</h3>
-          <p class="fx-modal-sinopse" style="margin-bottom:14px">Essa senha fica guardada só neste navegador e é o que permite editar o site depois.</p>
-          <div class="fx-form-grid">
-            <div class="fx-form-full"><label class="fx-field-label">Nova senha</label><input class="fx-input" type="password" id="f-admin-pass1"></div>
-            <div class="fx-form-full"><label class="fx-field-label">Confirmar senha</label><input class="fx-input" type="password" id="f-admin-pass2"></div>
-            ${errorMsg ? `<div class="fx-form-full" style="color:var(--red);font-size:12.5px">${esc(errorMsg)}</div>` : ''}
-          </div>
-          <div class="fx-modal-actions">
-            <button class="fx-btn" onclick="fxCreateAdminPassword()">Criar e entrar</button>
-            <button class="fx-btn-ghost fx-btn" onclick="fxCloseModal()">Cancelar</button>
-          </div>
+          <h3 class="fx-modal-title">Supabase ainda não configurado</h3>
+          <p class="fx-modal-sinopse">Preencha SUPABASE_URL, SUPABASE_ANON_KEY e ADMIN_EMAIL no início do código antes de entrar como admin. Veja o guia de configuração.</p>
+          <div class="fx-modal-actions"><button class="fx-btn-ghost fx-btn" onclick="fxCloseModal()">Fechar</button></div>
         </div>`);
-    } else {
-      fxOpenModal(`<div class="fx-modal-body">
-          <h3 class="fx-modal-title">Modo administrador</h3>
-          <div class="fx-form-grid">
-            <div class="fx-form-full"><label class="fx-field-label">Senha</label><input class="fx-input" type="password" id="f-admin-pass" onkeydown="if(event.key==='Enter')fxCheckAdminPassword()"></div>
-            ${errorMsg ? `<div class="fx-form-full" style="color:var(--red);font-size:12.5px">${esc(errorMsg)}</div>` : ''}
-          </div>
-          <div class="fx-modal-actions">
-            <button class="fx-btn" onclick="fxCheckAdminPassword()">Entrar</button>
-            <button class="fx-btn-ghost fx-btn" onclick="fxCloseModal()">Cancelar</button>
-          </div>
-        </div>`);
+      return;
     }
-  }
-
-  async function fxCreateAdminPassword() {
-    const p1 = document.getElementById('f-admin-pass1').value;
-    const p2 = document.getElementById('f-admin-pass2').value;
-    if (p1.length < 4) return fxOpenAdminLogin('A senha precisa ter pelo menos 4 caracteres.');
-    if (p1 !== p2) return fxOpenAdminLogin('As senhas não são iguais.');
-    localStorage.setItem(ADMIN_HASH_KEY, await fxHash(p1));
-    localStorage.setItem(ADMIN_SESSION_KEY, 'true');
-    fxApplyAdminUI();
-    fxRenderNav();
-    fxCloseModal();
+    fxOpenModal(`<div class="fx-modal-body">
+        <h3 class="fx-modal-title">Modo administrador</h3>
+        <div class="fx-form-grid">
+          <div class="fx-form-full"><label class="fx-field-label">Senha</label><input class="fx-input" type="password" id="f-admin-pass" onkeydown="if(event.key==='Enter')fxCheckAdminPassword()"></div>
+          ${errorMsg ? `<div class="fx-form-full" style="color:var(--red);font-size:12.5px">${esc(errorMsg)}</div>` : ''}
+        </div>
+        <div class="fx-modal-actions">
+          <button class="fx-btn" onclick="fxCheckAdminPassword()">Entrar</button>
+          <button class="fx-btn-ghost fx-btn" onclick="fxCloseModal()">Cancelar</button>
+        </div>
+      </div>`);
   }
 
   async function fxCheckAdminPassword() {
     const pass = document.getElementById('f-admin-pass').value;
-    const savedHash = localStorage.getItem(ADMIN_HASH_KEY);
-    if (await fxHash(pass) !== savedHash) return fxOpenAdminLogin('Senha incorreta.');
-    localStorage.setItem(ADMIN_SESSION_KEY, 'true');
+    const {
+      error
+    } = await _supabase.auth.signInWithPassword({
+      email: ADMIN_EMAIL,
+      password: pass
+    });
+    if (error) return fxOpenAdminLogin('Senha incorreta.');
+    fxAdminCached = true;
     fxApplyAdminUI();
     fxRenderNav();
     fxCloseModal();
   }
 
   function fxLogoutAdmin() {
-    localStorage.removeItem(ADMIN_SESSION_KEY);
+    if (_supabase) _supabase.auth.signOut();
+    fxAdminCached = false;
     fxApplyAdminUI();
     fxRenderNav();
     fxSwitchTab('cronograma');
@@ -1487,12 +1549,10 @@
   function fxOpenAdminPanel() {
     fxOpenModal(`<div class="fx-modal-body">
         <h3 class="fx-modal-title">Painel do administrador</h3>
-        <p class="fx-modal-sinopse" style="margin-bottom:16px">Essas ferramentas não aparecem para visitantes.</p>
+        <p class="fx-modal-sinopse" style="margin-bottom:16px">Suas edições já são salvas direto no banco de dados e aparecem para todo mundo na hora — não é mais preciso publicar nada manualmente. Para trocar a senha de admin, use o painel do Supabase (Authentication → Users).</p>
         <div style="display:flex;flex-direction:column;gap:8px">
-          <button class="fx-btn" onclick="fxExportPublicData()">Publicar (exportar fx-data.json)</button>
           <button class="fx-btn-ghost fx-btn" onclick="fxExportFullBackup()">Exportar backup completo (com Conteúdos)</button>
-          <button class="fx-btn-ghost fx-btn" onclick="document.getElementById('fx-import-input').click()">Importar dados de um arquivo</button>
-          <button class="fx-btn-ghost fx-btn" onclick="fxOpenAdminLogin()">Trocar senha</button>
+          <button class="fx-btn-ghost fx-btn" onclick="document.getElementById('fx-import-input').click()">Importar dados de um arquivo (restaura no banco)</button>
           <button class="fx-btn-danger fx-btn" onclick="fxLogoutAdmin()">Sair do modo admin</button>
         </div>
         <input type="file" id="fx-import-input" accept="application/json" style="display:none" onchange="fxImportData(this.files[0])">
@@ -1511,14 +1571,6 @@
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-  }
-
-  /** Gera o arquivo que você sobe pro GitHub para "publicar" as mudanças para todo mundo.
-      Não inclui Conteúdos de propósito — isso é o que mantém essa aba privada. */
-  function fxExportPublicData() {
-    const data = {};
-    FX_PUBLIC_KEYS.forEach(k => data[k] = state[k]);
-    fxDownloadJson('fx-data.json', data);
   }
 
   /** Backup completo (inclusive Conteúdos) para você mesmo guardar ou mover para outro navegador/computador. */
