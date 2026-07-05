@@ -1112,6 +1112,12 @@
       <section class="fx-tab active" id="tab-cronograma">
         <div class="fx-hero" id="fx-hero"></div>
         <div class="fx-week" id="fx-week"></div>
+        <div class="fx-admin-control" id="fx-week-next-wrap" style="display:none;margin-top:28px">
+          <div class="fx-section-toolbar" style="margin-bottom:12px">
+            <div><h2 class="fx-section-title" style="font-size:16px">Semana seguinte</h2><p class="fx-section-sub">Visível só para você — planeje a próxima semana com antecedência</p></div>
+          </div>
+          <div class="fx-week" id="fx-week-next"></div>
+        </div>
       </section>
 
       <section class="fx-tab" id="tab-patrocinados">
@@ -1183,9 +1189,9 @@
        Users no Supabase. É com esse e-mail (+ a senha que você definir
        lá) que o modo admin deste site vai logar por baixo dos panos.
      ============================================================ */
-  const SUPABASE_URL = 'https://iklvbvadyqwzrfcjzlcv.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_q0YbVu1Tg109he594kMh4w_xZmSjb-D';
-  const ADMIN_EMAIL = 'kyknevz@gmail.com';
+  const SUPABASE_URL = 'https://SEU-PROJETO.supabase.co';
+  const SUPABASE_ANON_KEY = 'SUA-CHAVE-ANON-OU-PUBLISHABLE-AQUI';
+  const ADMIN_EMAIL = 'seu-email-admin@exemplo.com';
   const FX_TABLE = 'fx_data';
 
   const _supabase = (typeof window !== 'undefined' && window.supabase && !SUPABASE_URL.includes('SEU-PROJETO'))
@@ -1362,7 +1368,7 @@
         fxRenderHero();
         break;
       case 'schedule':
-        fxRenderWeek();
+        fxRenderAllWeeks();
         break;
       case 'platforms':
         fxRenderPlatformFilter();
@@ -1428,7 +1434,7 @@
     fxApplyAdminUI();
     fxRenderNav();
     fxRenderHero();
-    fxRenderWeek();
+    fxRenderAllWeeks();
     fxRenderWatchedFilters();
     fxRenderGamesFilters();
     fxRenderPlatformFilter();
@@ -1600,7 +1606,7 @@
         }
       });
       fxRenderHero();
-      fxRenderWeek();
+      fxRenderAllWeeks();
       fxRenderWatchedFilters();
       fxRenderGamesFilters();
       fxRenderPlatformFilter();
@@ -1635,14 +1641,17 @@
     }
   ];
 
+  let fxCurrentTab = 'cronograma';
+
   function fxRenderNav() {
     const visibleTabs = TABS.filter(t => !t.adminOnly || fxIsAdmin());
     document.getElementById('fx-nav').innerHTML = visibleTabs.map(t =>
-      `<button class="fx-nav-btn${t.id==='cronograma'?' active':''}" data-tab="${t.id}" onclick="fxSwitchTab('${t.id}')">${t.label}${t.soon ? `<span class="fx-nav-soon">${t.soon}</span>` : ''}</button>`
+      `<button class="fx-nav-btn${t.id===fxCurrentTab?' active':''}" data-tab="${t.id}" onclick="fxSwitchTab('${t.id}')">${t.label}${t.soon ? `<span class="fx-nav-soon">${t.soon}</span>` : ''}</button>`
     ).join('');
   }
 
   function fxSwitchTab(tab) {
+    fxCurrentTab = tab;
     document.querySelectorAll('.fx-nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     document.querySelectorAll('.fx-tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + tab));
   }
@@ -1707,13 +1716,16 @@
 
     grid.innerHTML = items.map(i => {
       if (catalog === 'sponsored') {
+        const isEpType = i.type === 'Série' || i.type === 'Anime';
+        const right = (isEpType && i.totalEpisodes) ?
+          `<span class="fx-badge" style="background:#0008;color:#fff">Ep ${i.sponsoredEpisodes||0}/${i.totalEpisodes}</span>` :
+          (i.year ? `<span class="fx-badge" style="background:#0008;color:#fff">${esc(i.year)}</span>` : '');
         return fxPosterCard({
           img: i.image,
           title: i.title,
           sub: i.type,
           topLeftHtml: fxBadge('Em breve', '#F0B429'),
-          topRightHtml: i.year ?
-            `<span class="fx-badge" style="background:#0008;color:#fff">${esc(i.year)}</span>` : '',
+          topRightHtml: right,
           onclick: `fxOpenDetail('sponsored','${i.id}')`
         });
       }
@@ -1925,18 +1937,18 @@
   }
 
   function fxDeleteHero() {
-    state.hero = null;
+    state.hero = {};
     fxSave('hero');
     fxRenderHero();
     fxCloseModal();
   }
 
   /* ---------- Week schedule ---------- */
-  function fxWeekDates() {
+  function fxWeekDates(weekOffset) {
     const now = new Date();
     const dow = now.getDay();
     const sunday = new Date(now);
-    sunday.setDate(now.getDate() - dow);
+    sunday.setDate(now.getDate() - dow + (weekOffset || 0) * 7);
     return DAYS.map((_, i) => {
       const d = new Date(sunday);
       d.setDate(sunday.getDate() + i);
@@ -1948,14 +1960,24 @@
     return state[catalog].find(i => i.id === id);
   }
 
-  function fxRenderWeek() {
-    const dates = fxWeekDates();
+  /** Redesenha a semana atual e, se for admin, também a próxima semana (planejamento). */
+  function fxRenderAllWeeks() {
+    fxRenderWeek(0, 'fx-week');
+    const nextEl = document.getElementById('fx-week-next-wrap');
+    if (nextEl) nextEl.style.display = fxIsAdmin() ? '' : 'none';
+    if (fxIsAdmin()) fxRenderWeek(1, 'fx-week-next');
+  }
+
+  function fxRenderWeek(weekOffset, elId) {
+    weekOffset = weekOffset || 0;
+    const dates = fxWeekDates(weekOffset);
     const todayStr = new Date().toDateString();
-    const el = document.getElementById('fx-week');
+    const el = document.getElementById(elId || 'fx-week');
+    if (!el) return;
     el.innerHTML = DAYS.map((day, idx) => {
       const date = dates[idx];
-      const isToday = date.toDateString() === todayStr;
-      const items = state.schedule.filter(s => s.day === day);
+      const isToday = weekOffset === 0 && date.toDateString() === todayStr;
+      const items = state.schedule.filter(s => s.day === day && (s.weekOffset || 0) === weekOffset);
       const cardsHtml = items.length ? items.map(s => {
         const item = fxCatalogById(s.catalog, s.refId);
         if (!item) return '';
@@ -1974,12 +1996,11 @@
       }).join('') : '';
       return `<div class="fx-day-col${isToday?' today':''}">
           <div class="fx-day-head">
-            <div class="fx-day-name">${day.toUpperCase()}</div>
+            <div class="fx-day-name">${isToday ? 'HOJE' : day.toUpperCase()}</div>
             <div class="fx-day-date">${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}</div>
-            ${isToday ? '<div class="fx-day-today-tag">Hoje</div>' : ''}
           </div>
           <div class="fx-day-items">${cardsHtml || '<div class="fx-day-empty">Sem programação</div>'}</div>
-          ${fxIsAdmin() ? `<button class="fx-day-add" onclick="fxOpenScheduleAdd('${day}')">+ Adicionar</button>` : ''}
+          ${fxIsAdmin() ? `<button class="fx-day-add" onclick="fxOpenScheduleAdd('${day}',${weekOffset})">+ Adicionar</button>` : ''}
         </div>`;
     }).join('');
   }
@@ -1987,15 +2008,17 @@
   function fxRemoveSchedule(id) {
     state.schedule = state.schedule.filter(s => s.id !== id);
     fxSave('schedule');
-    fxRenderWeek();
+    fxRenderAllWeeks();
   }
 
   let fxSchedDay = null;
+  let fxSchedWeekOffset = 0;
 
-  function fxOpenScheduleAdd(day) {
+  function fxOpenScheduleAdd(day, weekOffset) {
     fxSchedDay = day;
+    fxSchedWeekOffset = weekOffset || 0;
     fxOpenModal(`<div class="fx-modal-body">
-        <h3 class="fx-modal-title">Adicionar em ${esc(day)}</h3>
+        <h3 class="fx-modal-title">Adicionar em ${esc(day)}${fxSchedWeekOffset ? ' (semana seguinte)' : ''}</h3>
         <div class="fx-mode-switch">
           <button class="fx-mode-btn active" id="sched-mode-existing" onclick="fxSchedMode('existing')">Selecionar existente</button>
           <button class="fx-mode-btn" id="sched-mode-new" onclick="fxSchedMode('new')">Criar novo</button>
@@ -2053,11 +2076,12 @@
     state.schedule.push({
       id: uid(),
       day: fxSchedDay,
+      weekOffset: fxSchedWeekOffset,
       catalog: cat,
       refId: id
     });
     fxSave('schedule');
-    fxRenderWeek();
+    fxRenderAllWeeks();
     fxCloseModal();
   }
 
@@ -2071,11 +2095,12 @@
     state.schedule.push({
       id: uid(),
       day: fxSchedDay,
+      weekOffset: fxSchedWeekOffset,
       catalog: cat,
       refId: item.id
     });
     fxSave('schedule');
-    fxRenderWeek();
+    fxRenderAllWeeks();
     fxCloseModal();
   }
 
@@ -2092,12 +2117,15 @@
   /* ---------- Forms (add / edit) ---------- */
   function fxFormFieldsHtml(catalog, d) {
     if (catalog === 'sponsored') {
+      const showEp = d.type === 'Série' || d.type === 'Anime';
       return `<div class="fx-form-grid">
           <div class="fx-form-full"><label class="fx-field-label">Título</label><input class="fx-input" id="f-title" value="${esc(d.title||'')}"></div>
           <div class="fx-form-full"><label class="fx-field-label">Imagem (URL)</label><input class="fx-input" id="f-image" value="${esc(d.image||'')}"></div>
           <div class="fx-form-full" style="margin-top:-4px"><input type="file" accept="image/*" class="fx-input" style="width:100%;font-size:12px;padding:6px" onchange="fxImageFileToInput(this,'f-image')"><span style="font-size:11px;color:var(--text-3)">ou envie uma imagem do computador (comprimida automaticamente)</span></div>
-          <div><label class="fx-field-label">Tipo</label><select class="fx-select" id="f-type">${['Filme','Série','Anime','Jogo'].map(t=>`<option${d.type===t?' selected':''}>${t}</option>`).join('')}</select></div>
+          <div><label class="fx-field-label">Tipo</label><select class="fx-select" id="f-type" onchange="fxToggleSponsoredEpisodeFields()">${['Filme','Série','Anime','Jogo'].map(t=>`<option${d.type===t?' selected':''}>${t}</option>`).join('')}</select></div>
           <div><label class="fx-field-label">Ano</label><input class="fx-input" type="number" id="f-year" value="${esc(d.year||'')}"></div>
+          <div id="f-sponsored-ep-1" style="display:${showEp?'block':'none'}"><label class="fx-field-label">Episódios patrocinados</label><input class="fx-input" type="number" id="f-sponsoredEpisodes" value="${esc(d.sponsoredEpisodes||'')}"></div>
+          <div id="f-sponsored-ep-2" style="display:${showEp?'block':'none'}"><label class="fx-field-label">Total de episódios</label><input class="fx-input" type="number" id="f-totalEpisodes" value="${esc(d.totalEpisodes||'')}"></div>
           <div class="fx-form-full"><label class="fx-field-label">Patrocinado por</label><input class="fx-input" id="f-sponsor" value="${esc(d.sponsor||'')}"></div>
           <div class="fx-form-full"><label class="fx-field-label">Sinopse</label><textarea class="fx-input" rows="3" id="f-sinopse">${esc(d.sinopse||'')}</textarea></div>
         </div>`;
@@ -2155,6 +2183,15 @@
       </div>`;
   }
 
+  function fxToggleSponsoredEpisodeFields() {
+    const type = document.getElementById('f-type').value;
+    const show = (type === 'Série' || type === 'Anime');
+    ['f-sponsored-ep-1', 'f-sponsored-ep-2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = show ? 'block' : 'none';
+    });
+  }
+
   function fxAddPlatformToForm() {
     const input = document.getElementById('f-new-platform');
     const name = input.value.trim();
@@ -2205,6 +2242,8 @@
       type: g('f-type'),
       year: g('f-year'),
       sponsor: g('f-sponsor'),
+      sponsoredEpisodes: g('f-sponsoredEpisodes'),
+      totalEpisodes: g('f-totalEpisodes'),
       sinopse: g('f-sinopse')
     };
     if (catalog === 'watched') return {
@@ -2252,7 +2291,7 @@
     else arr.unshift(data);
     fxSave(catalog);
     fxRenderGrid(catalog);
-    if (catalog !== 'content') fxRenderWeek();
+    if (catalog !== 'content') fxRenderAllWeeks();
     fxCloseModal();
   }
 
@@ -2262,7 +2301,7 @@
     fxSave(catalog);
     fxSave('schedule');
     fxRenderGrid(catalog);
-    fxRenderWeek();
+    fxRenderAllWeeks();
     fxCloseModal();
   }
 
@@ -2279,7 +2318,16 @@
     if (catalog === 'sponsored') {
       tags =
         `${fxBadge('Em breve','#F0B429')}<span class="fx-modal-meta-sep"></span><span>${esc(d.type||'')}</span><span class="fx-modal-meta-sep"></span><span>${esc(d.year||'')}</span>`;
-      extra = d.sponsor ? `<div class="fx-sponsor-pill">Patrocinado por <b>${esc(d.sponsor)}</b></div>` : '';
+      let epBlock = '';
+      if ((d.type === 'Série' || d.type === 'Anime') && d.totalEpisodes) {
+        const pct = Math.min(100, Math.round(((+d.sponsoredEpisodes || 0) / (+d.totalEpisodes)) * 100));
+        epBlock = `<div class="fx-progress-card">
+            <div class="fx-progress-top"><span class="fx-progress-label">Episódios patrocinados</span><span class="fx-progress-pct">${pct}%</span></div>
+            <div class="fx-progress-val" style="margin-bottom:8px">${d.sponsoredEpisodes||0} / ${d.totalEpisodes} episódios</div>
+            <div class="fx-progress-bar"><div class="fx-progress-fill" style="width:${pct}%"></div></div>
+          </div>`;
+      }
+      extra = (d.sponsor ? `<div class="fx-sponsor-pill">Patrocinado por <b>${esc(d.sponsor)}</b></div>` : '') + epBlock;
     } else if (catalog === 'watched') {
       tags =
         `${fxBadge(d.status||'Assistido', STATUS_COLORS[d.status]||'#4ADE9E')}<span class="fx-modal-meta-sep"></span><span>${esc(d.type||'')}</span><span class="fx-modal-meta-sep"></span><span>${esc(d.year||'')}</span>`;
