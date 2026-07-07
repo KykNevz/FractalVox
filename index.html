@@ -322,7 +322,227 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-bottom: 18px;
+  }
+
+  /* Botão que abre/fecha o painel de filtros */
+  .fx-filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 12.5px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+
+  .fx-filter-toggle:hover {
+    border-color: var(--border-strong);
+    color: var(--text);
+  }
+
+  .fx-filter-count {
+    background: var(--accent);
+    color: #fff;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 20px;
+    min-width: 16px;
+    text-align: center;
+  }
+
+  .fx-filter-chevron {
+    transition: transform 0.2s ease;
+  }
+
+  .fx-filter-toggle.open .fx-filter-chevron {
+    transform: rotate(180deg);
+  }
+
+  /* Colapsa suavemente com max-height em vez de display:none, pra ter transição */
+  .fx-filter-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+  }
+
+  .fx-filter-panel.open {
+    max-height: 300px;
+    margin-bottom: 16px;
+  }
+
+  /* ---------- Toggle Grade / Board (Conteúdos) ---------- */
+  .fx-view-toggle {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px;
+  }
+
+  .fx-view-btn {
+    background: none;
+    border: none;
+    color: var(--text-2);
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .fx-view-btn.active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* ---------- Board Kanban (Conteúdos) ---------- */
+  .fx-board {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(210px, 1fr));
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .fx-board-col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    min-height: 160px;
+  }
+
+  .fx-board-col-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .fx-board-col-title {
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .fx-board-col-count {
+    font-size: 11px;
+    color: var(--text-3);
+    background: var(--surface-2);
+    padding: 1px 8px;
+    border-radius: 20px;
+  }
+
+  .fx-board-empty {
+    text-align: center;
+    color: var(--text-3);
+    font-size: 11.5px;
+    padding: 16px 4px;
+  }
+
+  .fx-board-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+  }
+
+  .fx-board-card:hover {
+    border-color: var(--accent);
+  }
+
+  .fx-board-card-img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 6px;
+    object-fit: cover;
+    margin-bottom: 8px;
+    background: var(--surface);
+    display: block;
+  }
+
+  .fx-board-card-noimg {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-3);
+  }
+
+  .fx-board-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .fx-board-card-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .fx-board-note-icon {
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .fx-board-card-plats {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  .fx-board-card-move {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+  }
+
+  .fx-board-move-btn {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    border-radius: 6px;
+    padding: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .fx-board-move-btn:hover {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  .fx-board-move-btn:disabled {
+    opacity: 0.25;
+    cursor: default;
   }
 
   /* ---------- Poster cards ---------- */
@@ -1139,9 +1359,15 @@
             <button class="fx-btn fx-admin-control" onclick="fxOpenForm('watched')">+ Adicionar</button>
           </div>
         </div>
-        <div class="fx-filter-row">
-          <div class="fx-chip-row" id="watched-type-filter"></div>
-          <div class="fx-chip-row" id="watched-status-filter"></div>
+        <button class="fx-filter-toggle" id="filter-toggle-watched" onclick="fxToggleFilterPanel('watched')">
+          <span>Filtros</span><span class="fx-filter-count" id="filter-count-watched" style="display:none"></span>
+          <svg class="fx-filter-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="fx-filter-panel" id="filter-panel-watched">
+          <div class="fx-filter-row">
+            <div class="fx-chip-row" id="watched-type-filter"></div>
+            <div class="fx-chip-row" id="watched-status-filter"></div>
+          </div>
         </div>
         <div class="fx-grid" id="grid-watched"></div>
       </section>
@@ -1154,7 +1380,13 @@
             <button class="fx-btn fx-admin-control" onclick="fxOpenForm('games')">+ Adicionar</button>
           </div>
         </div>
-        <div class="fx-chip-row" id="games-status-filter" style="margin-bottom:16px"></div>
+        <button class="fx-filter-toggle" id="filter-toggle-games" onclick="fxToggleFilterPanel('games')">
+          <span>Filtros</span><span class="fx-filter-count" id="filter-count-games" style="display:none"></span>
+          <svg class="fx-filter-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="fx-filter-panel" id="filter-panel-games">
+          <div class="fx-chip-row" id="games-status-filter"></div>
+        </div>
         <div class="fx-grid" id="grid-games"></div>
       </section>
 
@@ -1162,12 +1394,25 @@
         <div class="fx-section-toolbar">
           <div><h2 class="fx-section-title">Conteúdos</h2><p class="fx-section-sub">Vídeos e cortes gravados para as redes</p></div>
           <div class="fx-toolbar-right">
-            <input class="fx-input fx-search" autocomplete="off" placeholder="Buscar..." oninput="fxRenderGrid('content')" id="search-content">
+            <input class="fx-input fx-search" autocomplete="off" placeholder="Buscar..." oninput="fxRenderContent()" id="search-content">
             <button class="fx-btn fx-admin-control" onclick="fxOpenForm('content')">+ Adicionar</button>
           </div>
         </div>
-        <div class="fx-chip-row" id="content-platform-filter" style="margin-bottom:16px"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+          <button class="fx-filter-toggle" id="filter-toggle-content" onclick="fxToggleFilterPanel('content')" style="margin-bottom:0">
+            <span>Filtros</span><span class="fx-filter-count" id="filter-count-content" style="display:none"></span>
+            <svg class="fx-filter-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="fx-view-toggle">
+            <button class="fx-view-btn active" id="content-view-grid" onclick="fxSetContentView('grid')">Grade</button>
+            <button class="fx-view-btn" id="content-view-board" onclick="fxSetContentView('board')">Board</button>
+          </div>
+        </div>
+        <div class="fx-filter-panel" id="filter-panel-content">
+          <div class="fx-chip-row" id="content-platform-filter" style="margin-bottom:16px"></div>
+        </div>
         <div class="fx-grid" id="grid-content"></div>
+        <div class="fx-board" id="board-content" style="display:none"></div>
       </section>
 
     </main>
@@ -1226,7 +1471,10 @@
     trash: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6h16z"/></svg>',
     clock: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>',
     ext: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7M21 3l-9 9M21 14v5a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h5"/></svg>',
-    film: '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M7 3v18M17 3v18M2 8h5M2 16h5M17 8h5M17 16h5"/></svg>'
+    film: '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M7 3v18M17 3v18M2 8h5M2 16h5M17 8h5M17 16h5"/></svg>',
+    note: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3v4a1 1 0 001 1h4"/><path d="M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/><path d="M9 13h6M9 17h6"/></svg>',
+    chevronLeft: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 6l-6 6 6 6"/></svg>',
+    chevronRight: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg>'
   };
 
   const PLATFORM_COLORS = {
@@ -1438,7 +1686,9 @@
     fxRenderWatchedFilters();
     fxRenderGamesFilters();
     fxRenderPlatformFilter();
+    fxInitFilterPanels();
     ['sponsored', 'watched', 'games', 'content'].forEach(fxRenderGrid);
+    fxSetContentView(fxLocalGet('content-view') || 'grid');
     setInterval(fxRenderHero, 1000);
   }
 
@@ -1461,7 +1711,7 @@
       console.error('Erro ao salvar no Supabase:', e);
       alert(
         'Não foi possível salvar no banco de dados agora (veja o console para detalhes). A mudança ficou só neste navegador por enquanto.'
-        );
+      );
     }
   }
 
@@ -1509,23 +1759,23 @@
   async function fxOpenAdminLogin(errorMsg) {
     if (!_supabase) {
       fxOpenModal(`<div class="fx-modal-body">
-            <h3 class="fx-modal-title">Supabase ainda não configurado</h3>
-            <p class="fx-modal-sinopse">Preencha SUPABASE_URL, SUPABASE_ANON_KEY e ADMIN_EMAIL no início do código antes de entrar como admin. Veja o guia de configuração.</p>
-            <div class="fx-modal-actions"><button class="fx-btn-ghost fx-btn" onclick="fxCloseModal()">Fechar</button></div>
-          </div>`);
+              <h3 class="fx-modal-title">Supabase ainda não configurado</h3>
+              <p class="fx-modal-sinopse">Preencha SUPABASE_URL, SUPABASE_ANON_KEY e ADMIN_EMAIL no início do código antes de entrar como admin. Veja o guia de configuração.</p>
+              <div class="fx-modal-actions"><button class="fx-btn-ghost fx-btn" onclick="fxCloseModal()">Fechar</button></div>
+            </div>`);
       return;
     }
     fxOpenModal(`<div class="fx-modal-body">
-          <h3 class="fx-modal-title">Modo administrador</h3>
-          <div class="fx-form-grid">
-            <div class="fx-form-full"><label class="fx-field-label">Senha</label><input class="fx-input" autocomplete="current-password" type="password" id="f-admin-pass" onkeydown="if(event.key==='Enter')fxCheckAdminPassword()"></div>
-            ${errorMsg ? `<div class="fx-form-full" style="color:var(--red);font-size:12.5px">${esc(errorMsg)}</div>` : ''}
-          </div>
-          <div class="fx-modal-actions">
-            <button class="fx-btn" onclick="fxCheckAdminPassword()">Entrar</button>
-            <button class="fx-btn-ghost fx-btn" onclick="fxCloseModal()">Cancelar</button>
-          </div>
-        </div>`);
+            <h3 class="fx-modal-title">Modo administrador</h3>
+            <div class="fx-form-grid">
+              <div class="fx-form-full"><label class="fx-field-label">Senha</label><input class="fx-input" autocomplete="current-password" type="password" id="f-admin-pass" onkeydown="if(event.key==='Enter')fxCheckAdminPassword()"></div>
+              ${errorMsg ? `<div class="fx-form-full" style="color:var(--red);font-size:12.5px">${esc(errorMsg)}</div>` : ''}
+            </div>
+            <div class="fx-modal-actions">
+              <button class="fx-btn" onclick="fxCheckAdminPassword()">Entrar</button>
+              <button class="fx-btn-ghost fx-btn" onclick="fxCloseModal()">Cancelar</button>
+            </div>
+          </div>`);
   }
 
   async function fxCheckAdminPassword() {
@@ -1556,15 +1806,15 @@
       fazer backup completo, importar e trocar senha. */
   function fxOpenAdminPanel() {
     fxOpenModal(`<div class="fx-modal-body">
-          <h3 class="fx-modal-title">Painel do administrador</h3>
-          <p class="fx-modal-sinopse" style="margin-bottom:16px">Suas edições já são salvas direto no banco de dados e aparecem para todo mundo na hora — não é mais preciso publicar nada manualmente. Para trocar a senha de admin, use o painel do Supabase (Authentication → Users).</p>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <button class="fx-btn-ghost fx-btn" onclick="fxExportFullBackup()">Exportar backup completo (com Conteúdos)</button>
-            <button class="fx-btn-ghost fx-btn" onclick="document.getElementById('fx-import-input').click()">Importar dados de um arquivo (restaura no banco)</button>
-            <button class="fx-btn-danger fx-btn" onclick="fxLogoutAdmin()">Sair do modo admin</button>
-          </div>
-          <input type="file" id="fx-import-input" accept="application/json" style="display:none" onchange="fxImportData(this.files[0])">
-        </div>`);
+            <h3 class="fx-modal-title">Painel do administrador</h3>
+            <p class="fx-modal-sinopse" style="margin-bottom:16px">Suas edições já são salvas direto no banco de dados e aparecem para todo mundo na hora — não é mais preciso publicar nada manualmente. Para trocar a senha de admin, use o painel do Supabase (Authentication → Users).</p>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="fx-btn-ghost fx-btn" onclick="fxExportFullBackup()">Exportar backup completo (com Conteúdos)</button>
+              <button class="fx-btn-ghost fx-btn" onclick="document.getElementById('fx-import-input').click()">Importar dados de um arquivo (restaura no banco)</button>
+              <button class="fx-btn-danger fx-btn" onclick="fxLogoutAdmin()">Sair do modo admin</button>
+            </div>
+            <input type="file" id="fx-import-input" accept="application/json" style="display:none" onchange="fxImportData(this.files[0])">
+          </div>`);
   }
 
   function fxDownloadJson(filename, obj) {
@@ -1599,12 +1849,12 @@
         data = JSON.parse(e.target.result);
       } catch (err) {
         fxOpenModal(`<div class="fx-modal-body">
-            <h3 class="fx-modal-title">Arquivo inválido</h3>
-            <p class="fx-modal-sinopse">Esse arquivo não é um JSON válido. Confira se é mesmo um backup ou fx-data.json exportado por este site.</p>
-            <div class="fx-modal-actions">
-              <button class="fx-btn" onclick="fxOpenAdminPanel()">Voltar</button>
-            </div>
-          </div>`);
+              <h3 class="fx-modal-title">Arquivo inválido</h3>
+              <p class="fx-modal-sinopse">Esse arquivo não é um JSON válido. Confira se é mesmo um backup ou fx-data.json exportado por este site.</p>
+              <div class="fx-modal-actions">
+                <button class="fx-btn" onclick="fxOpenAdminPanel()">Voltar</button>
+              </div>
+            </div>`);
         return;
       }
       let importedCount = 0;
@@ -1622,12 +1872,12 @@
       fxRenderPlatformFilter();
       ['sponsored', 'watched', 'games', 'content'].forEach(fxRenderGrid);
       fxOpenModal(`<div class="fx-modal-body">
-          <h3 class="fx-modal-title">Importado com sucesso</h3>
-          <p class="fx-modal-sinopse">${importedCount} categoria${importedCount === 1 ? '' : 's'} atualizada${importedCount === 1 ? '' : 's'} a partir do arquivo.</p>
-          <div class="fx-modal-actions">
-            <button class="fx-btn" onclick="fxCloseModal()">Fechar</button>
-          </div>
-        </div>`);
+            <h3 class="fx-modal-title">Importado com sucesso</h3>
+            <p class="fx-modal-sinopse">${importedCount} categoria${importedCount === 1 ? '' : 's'} atualizada${importedCount === 1 ? '' : 's'} a partir do arquivo.</p>
+            <div class="fx-modal-actions">
+              <button class="fx-btn" onclick="fxCloseModal()">Fechar</button>
+            </div>
+          </div>`);
     };
     reader.readAsText(file);
   }
@@ -1680,23 +1930,27 @@
       topLeftHtml,
       topRightHtml,
       onclick,
-      sub
+      sub,
+      bodyRightHtml
     } = opts;
     return `<div class="fx-card">
-          <div class="fx-card-inner" onclick="${onclick}">
-            <div class="fx-card-imgwrap">
-              ${fxImgTag(img, 'fx-card-img', 'fx-card-noimg')}
-              <div class="fx-card-gradient"></div>
-              ${topLeftHtml ? `<div class="fx-card-badge-top">${topLeftHtml}</div>` : ''}
-              ${topRightHtml ? `<div class="fx-card-badge-top-right">${topRightHtml}</div>` : ''}
-              <div class="fx-card-play"><div class="fx-play-circle">${ICON.play}</div></div>
+            <div class="fx-card-inner" onclick="${onclick}">
+              <div class="fx-card-imgwrap">
+                ${fxImgTag(img, 'fx-card-img', 'fx-card-noimg')}
+                <div class="fx-card-gradient"></div>
+                ${topLeftHtml ? `<div class="fx-card-badge-top">${topLeftHtml}</div>` : ''}
+                ${topRightHtml ? `<div class="fx-card-badge-top-right">${topRightHtml}</div>` : ''}
+                <div class="fx-card-play"><div class="fx-play-circle">${ICON.play}</div></div>
+              </div>
             </div>
-          </div>
-          <div class="fx-card-body">
-            <div class="fx-card-title">${esc(title)}</div>
-            <div class="fx-card-type">${sub || ''}</div>
-          </div>
-        </div>`;
+            <div class="fx-card-body" style="display:flex;justify-content:space-between;gap:6px;align-items:flex-start">
+              <div>
+                <div class="fx-card-title">${esc(title)}</div>
+                <div class="fx-card-type">${sub || ''}</div>
+              </div>
+              ${bodyRightHtml || ''}
+            </div>
+          </div>`;
   }
 
   function fxBadge(text, color) {
@@ -1727,6 +1981,7 @@
 
     if (!items.length) {
       grid.innerHTML = '<div class="fx-empty">Nada por aqui ainda. Clique em Adicionar para começar.</div>';
+      if (catalog === 'content') fxRenderBoard();
       return;
     }
 
@@ -1780,9 +2035,83 @@
         sub: plats.join('  '),
         topLeftHtml: tagsHtml,
         topRightHtml: fxBadge(i.status || 'Ideia', STATUS_COLORS[i.status] || '#83818E'),
+        bodyRightHtml: i.notes ? `<span class="fx-board-note-icon" title="Tem anotação">${ICON.note}</span>` : '',
         onclick: `fxOpenDetail('content','${i.id}')`
       });
     }).join('');
+
+    if (catalog === 'content') fxRenderBoard();
+  }
+
+  /** Alias com nome mais claro para os pontos que disparam a atualização de Conteúdos
+      (que tem duas visualizações: grade e board). */
+  function fxRenderContent() {
+    fxRenderGrid('content');
+  }
+
+  const CONTENT_STATUSES = ['Ideia', 'Em breve', 'Gravado', 'Edição', 'Finalizado'];
+
+  function fxSetContentView(view) {
+    fxLocalSet('content-view', view);
+    document.getElementById('content-view-grid').classList.toggle('active', view === 'grid');
+    document.getElementById('content-view-board').classList.toggle('active', view === 'board');
+    document.getElementById('grid-content').style.display = view === 'grid' ? '' : 'none';
+    document.getElementById('board-content').style.display = view === 'board' ? '' : 'none';
+    if (view === 'board') fxRenderBoard();
+  }
+
+  /** Desenha o board Kanban de Conteúdos: uma coluna por status, com botões para
+      mover o card pra frente/trás no fluxo (Ideia → ... → Finalizado). */
+  function fxRenderBoard() {
+    const board = document.getElementById('board-content');
+    if (!board) return;
+
+    const searchEl = document.getElementById('search-content');
+    const query = (searchEl ? searchEl.value : '').toLowerCase();
+    let items = state.content.filter(i => i.title.toLowerCase().includes(query));
+    if (fxFilters.content.platform) {
+      items = items.filter(i => (i.platforms || []).includes(fxFilters.content.platform));
+    }
+
+    board.innerHTML = CONTENT_STATUSES.map((status, colIndex) => {
+      const colItems = items.filter(i => (i.status || 'Ideia') === status);
+      const cardsHtml = colItems.length ? colItems.map(i => {
+        const plats = (i.platforms || []).slice(0, 3).map(p =>
+          `<span class="fx-badge" style="background:${fxPlatformColor(p)}22;color:${fxPlatformColor(p)}">${esc(p)}</span>`
+        ).join('');
+        const canMoveBack = colIndex > 0;
+        const canMoveFwd = colIndex < CONTENT_STATUSES.length - 1;
+        return `<div class="fx-board-card" onclick="fxOpenDetail('content','${i.id}')">
+                <div class="fx-board-card-top">
+                  <div class="fx-board-card-title">${esc(i.title)}</div>
+                  ${i.notes ? `<span class="fx-board-note-icon" title="Tem anotação">${ICON.note}</span>` : ''}
+                </div>
+                ${plats ? `<div class="fx-board-card-plats">${plats}</div>` : ''}
+                ${fxIsAdmin() ? `<div class="fx-board-card-move">
+                  <button class="fx-board-move-btn" title="Mover para trás" ${canMoveBack ? '' : 'disabled'} onclick="event.stopPropagation();fxMoveContentStatus('${i.id}',${colIndex-1})">${ICON.chevronLeft}</button>
+                  <button class="fx-board-move-btn" title="Mover para frente" ${canMoveFwd ? '' : 'disabled'} onclick="event.stopPropagation();fxMoveContentStatus('${i.id}',${colIndex+1})">${ICON.chevronRight}</button>
+                </div>` : ''}
+              </div>`;
+      }).join('') : '<div class="fx-board-empty">Vazio</div>';
+
+      return `<div class="fx-board-col">
+              <div class="fx-board-col-head">
+                <span class="fx-board-col-title">${esc(status)}</span>
+                <span class="fx-board-col-count">${colItems.length}</span>
+              </div>
+              ${cardsHtml}
+            </div>`;
+    }).join('');
+  }
+
+  /** Move um conteúdo para outro status a partir dos botões de seta do board. */
+  function fxMoveContentStatus(id, newIndex) {
+    if (newIndex < 0 || newIndex >= CONTENT_STATUSES.length) return;
+    const item = fxCatalogById('content', id);
+    if (!item) return;
+    item.status = CONTENT_STATUSES[newIndex];
+    fxSave('content');
+    fxRenderContent();
   }
 
   /* ---------- Filtros (chips) ----------
@@ -1821,6 +2150,7 @@
     fxRenderChipRow('watched-type-filter', WATCHED_TYPES, fxFilters.watched.type, 'fxSetWatchedTypeFilter', 'Tipo');
     fxRenderChipRow('watched-status-filter', WATCHED_STATUSES, fxFilters.watched.status, 'fxSetWatchedStatusFilter',
       'Status');
+    fxUpdateFilterCount('watched', (fxFilters.watched.type ? 1 : 0) + (fxFilters.watched.status ? 1 : 0));
   }
 
   function fxSetWatchedTypeFilter(value) {
@@ -1837,6 +2167,7 @@
 
   function fxRenderGamesFilters() {
     fxRenderChipRow('games-status-filter', GAME_TAGS, fxFilters.games.status, 'fxSetGamesStatusFilter', '');
+    fxUpdateFilterCount('games', fxFilters.games.status ? 1 : 0);
   }
 
   function fxSetGamesStatusFilter(value) {
@@ -1847,12 +2178,41 @@
 
   function fxRenderPlatformFilter() {
     fxRenderChipRow('content-platform-filter', state.platforms, fxFilters.content.platform, 'fxSetPlatformFilter', '');
+    fxUpdateFilterCount('content', fxFilters.content.platform ? 1 : 0);
   }
 
   function fxSetPlatformFilter(value) {
     fxFilters.content.platform = value;
     fxRenderPlatformFilter();
-    fxRenderGrid('content');
+    fxRenderContent();
+  }
+
+  /* ---------- Painel de filtros recolhível ----------
+     Lembra se o painel estava aberto/fechado (por seção) mesmo depois de recarregar
+     a página, e mostra um contador no botão quando algum filtro está ativo. */
+  function fxToggleFilterPanel(section) {
+    const panel = document.getElementById('filter-panel-' + section);
+    const toggle = document.getElementById('filter-toggle-' + section);
+    const isOpen = panel.classList.toggle('open');
+    toggle.classList.toggle('open', isOpen);
+    fxLocalSet('filters-open-' + section, isOpen);
+  }
+
+  function fxInitFilterPanels() {
+    ['watched', 'games', 'content'].forEach(section => {
+      const isOpen = fxLocalGet('filters-open-' + section) === true;
+      if (isOpen) {
+        document.getElementById('filter-panel-' + section).classList.add('open');
+        document.getElementById('filter-toggle-' + section).classList.add('open');
+      }
+    });
+  }
+
+  function fxUpdateFilterCount(section, count) {
+    const el = document.getElementById('filter-count-' + section);
+    if (!el) return;
+    el.style.display = count > 0 ? '' : 'none';
+    el.textContent = count;
   }
 
 
@@ -1893,48 +2253,48 @@
     });
 
     el.innerHTML = `
-          ${fxImgTag(h.image, 'fx-hero-img', 'fx-hero-img fx-hero-noimg')}
-          <div class="fx-hero-mid">
-            <div class="fx-hero-eyebrow"><span class="fx-hero-dot"></span>Próxima live</div>
-            <div class="fx-hero-title">${esc(h.title)}</div>
-            <div class="fx-hero-time">${ICON.clock} ${dayName.charAt(0).toUpperCase()+dayName.slice(1)} às ${timeStr}</div>
-          </div>
-          <div class="fx-hero-countdown">
-            <div class="fx-countdown-box"><div class="fx-countdown-num">${String(days).padStart(2,'0')}</div><div class="fx-countdown-label">Dias</div></div>
-            <div class="fx-countdown-box"><div class="fx-countdown-num">${String(hours).padStart(2,'0')}</div><div class="fx-countdown-label">Horas</div></div>
-            <div class="fx-countdown-box"><div class="fx-countdown-num">${String(mins).padStart(2,'0')}</div><div class="fx-countdown-label">Min</div></div>
-            <div class="fx-countdown-box"><div class="fx-countdown-num">${String(secs).padStart(2,'0')}</div><div class="fx-countdown-label">Seg</div></div>
-          </div>`;
+            ${fxImgTag(h.image, 'fx-hero-img', 'fx-hero-img fx-hero-noimg')}
+            <div class="fx-hero-mid">
+              <div class="fx-hero-eyebrow"><span class="fx-hero-dot"></span>Próxima live</div>
+              <div class="fx-hero-title">${esc(h.title)}</div>
+              <div class="fx-hero-time">${ICON.clock} ${dayName.charAt(0).toUpperCase()+dayName.slice(1)} às ${timeStr}</div>
+            </div>
+            <div class="fx-hero-countdown">
+              <div class="fx-countdown-box"><div class="fx-countdown-num">${String(days).padStart(2,'0')}</div><div class="fx-countdown-label">Dias</div></div>
+              <div class="fx-countdown-box"><div class="fx-countdown-num">${String(hours).padStart(2,'0')}</div><div class="fx-countdown-label">Horas</div></div>
+              <div class="fx-countdown-box"><div class="fx-countdown-num">${String(mins).padStart(2,'0')}</div><div class="fx-countdown-label">Min</div></div>
+              <div class="fx-countdown-box"><div class="fx-countdown-num">${String(secs).padStart(2,'0')}</div><div class="fx-countdown-label">Seg</div></div>
+            </div>`;
   }
 
   function fxOpenHeroForm() {
     const h = state.hero || {};
     const dtVal = h.datetime ? h.datetime.slice(0, 16) : '';
     fxOpenModal(`<div class="fx-modal-body">
-          <h3 class="fx-modal-title">Próxima live</h3>
-          <div class="fx-form-grid">
-            <div class="fx-form-full"><label class="fx-field-label">Título da live</label><input class="fx-input" autocomplete="off" id="f-hero-title" value="${esc(h.title||'')}"></div>
-            <div class="fx-form-full"><label class="fx-field-label">Imagem (URL)</label><input class="fx-input" autocomplete="off" id="f-hero-image" value="${esc(h.image||'')}"></div>
-            <div class="fx-form-full" style="margin-top:-4px"><input type="file" accept="image/*" class="fx-input" autocomplete="off" style="width:100%;font-size:12px;padding:6px" onchange="fxImageFileToInput(this,'f-hero-image')"><span style="font-size:11px;color:var(--text-3)">ou envie uma imagem do computador (comprimida automaticamente)</span></div>
-            <div class="fx-form-full"><label class="fx-field-label">Data e hora</label><input class="fx-input" autocomplete="off" type="datetime-local" id="f-hero-datetime" value="${dtVal}"></div>
-          </div>
-          <div class="fx-modal-actions">
-            <button class="fx-btn" onclick="fxSaveHero()">Salvar</button>
-            <button class="fx-btn-ghost fx-btn" onclick="fxCloseModal()">Cancelar</button>
-            ${h.datetime ? `<button class="fx-btn-danger fx-btn" onclick="fxConfirmDeleteHero()">${ICON.trash} Excluir</button>` : ''}
-          </div>
-        </div>`);
+            <h3 class="fx-modal-title">Próxima live</h3>
+            <div class="fx-form-grid">
+              <div class="fx-form-full"><label class="fx-field-label">Título da live</label><input class="fx-input" autocomplete="off" id="f-hero-title" value="${esc(h.title||'')}"></div>
+              <div class="fx-form-full"><label class="fx-field-label">Imagem (URL)</label><input class="fx-input" autocomplete="off" id="f-hero-image" value="${esc(h.image||'')}"></div>
+              <div class="fx-form-full" style="margin-top:-4px"><input type="file" accept="image/*" class="fx-input" autocomplete="off" style="width:100%;font-size:12px;padding:6px" onchange="fxImageFileToInput(this,'f-hero-image')"><span style="font-size:11px;color:var(--text-3)">ou envie uma imagem do computador (comprimida automaticamente)</span></div>
+              <div class="fx-form-full"><label class="fx-field-label">Data e hora</label><input class="fx-input" autocomplete="off" type="datetime-local" id="f-hero-datetime" value="${dtVal}"></div>
+            </div>
+            <div class="fx-modal-actions">
+              <button class="fx-btn" onclick="fxSaveHero()">Salvar</button>
+              <button class="fx-btn-ghost fx-btn" onclick="fxCloseModal()">Cancelar</button>
+              ${h.datetime ? `<button class="fx-btn-danger fx-btn" onclick="fxConfirmDeleteHero()">${ICON.trash} Excluir</button>` : ''}
+            </div>
+          </div>`);
   }
 
   function fxConfirmDeleteHero() {
     fxOpenModal(`<div class="fx-modal-body">
-          <h3 class="fx-modal-title">Excluir próxima live?</h3>
-          <p class="fx-modal-sinopse">Essa ação não pode ser desfeita.</p>
-          <div class="fx-modal-actions">
-            <button class="fx-btn-danger fx-btn" onclick="fxDeleteHero()">${ICON.trash} Sim, excluir</button>
-            <button class="fx-btn-ghost fx-btn" onclick="fxOpenHeroForm()">Cancelar</button>
-          </div>
-        </div>`);
+            <h3 class="fx-modal-title">Excluir próxima live?</h3>
+            <p class="fx-modal-sinopse">Essa ação não pode ser desfeita.</p>
+            <div class="fx-modal-actions">
+              <button class="fx-btn-danger fx-btn" onclick="fxDeleteHero()">${ICON.trash} Sim, excluir</button>
+              <button class="fx-btn-ghost fx-btn" onclick="fxOpenHeroForm()">Cancelar</button>
+            </div>
+          </div>`);
   }
 
   function fxSaveHero() {
@@ -2001,23 +2361,23 @@
         const tagText = s.catalog === 'sponsored' ? 'Em breve' : (s.catalog === 'games' ? 'Jogo' : (item.type ||
           'Assistido'));
         return `<div class="fx-daycard" onclick="fxOpenDetail('${s.catalog}','${item.id}')">
-              <div class="fx-daycard-imgwrap">
-                ${fxImgTag(item.image, 'fx-daycard-img', 'fx-daycard-noimg')}
-                <div class="fx-daycard-gradient"></div>
-                <span class="fx-daycard-tag" style="background:${tagColor}22;color:${tagColor}">${esc(tagText)}</span>
-                ${fxIsAdmin() ? `<button class="fx-daycard-remove" onclick="event.stopPropagation();fxRemoveSchedule('${s.id}')">${ICON.x}</button>` : ''}
-                <div class="fx-daycard-title">${esc(item.title)}</div>
-              </div>
-            </div>`;
+                <div class="fx-daycard-imgwrap">
+                  ${fxImgTag(item.image, 'fx-daycard-img', 'fx-daycard-noimg')}
+                  <div class="fx-daycard-gradient"></div>
+                  <span class="fx-daycard-tag" style="background:${tagColor}22;color:${tagColor}">${esc(tagText)}</span>
+                  ${fxIsAdmin() ? `<button class="fx-daycard-remove" onclick="event.stopPropagation();fxRemoveSchedule('${s.id}')">${ICON.x}</button>` : ''}
+                  <div class="fx-daycard-title">${esc(item.title)}</div>
+                </div>
+              </div>`;
       }).join('') : '';
       return `<div class="fx-day-col${isToday?' today':''}">
-            <div class="fx-day-head">
-              <div class="fx-day-name">${isToday ? 'HOJE' : day.toUpperCase()}</div>
-              <div class="fx-day-date">${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}</div>
-            </div>
-            <div class="fx-day-items">${cardsHtml || '<div class="fx-day-empty">Sem programação</div>'}</div>
-            ${fxIsAdmin() ? `<button class="fx-day-add" onclick="fxOpenScheduleAdd('${day}',${weekOffset})">+ Adicionar</button>` : ''}
-          </div>`;
+              <div class="fx-day-head">
+                <div class="fx-day-name">${isToday ? 'HOJE' : day.toUpperCase()}</div>
+                <div class="fx-day-date">${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}</div>
+              </div>
+              <div class="fx-day-items">${cardsHtml || '<div class="fx-day-empty">Sem programação</div>'}</div>
+              ${fxIsAdmin() ? `<button class="fx-day-add" onclick="fxOpenScheduleAdd('${day}',${weekOffset})">+ Adicionar</button>` : ''}
+            </div>`;
     }).join('');
   }
 
@@ -2034,13 +2394,13 @@
     fxSchedDay = day;
     fxSchedWeekOffset = weekOffset || 0;
     fxOpenModal(`<div class="fx-modal-body">
-          <h3 class="fx-modal-title">Adicionar em ${esc(day)}${fxSchedWeekOffset ? ' (semana seguinte)' : ''}</h3>
-          <div class="fx-mode-switch">
-            <button class="fx-mode-btn active" id="sched-mode-existing" onclick="fxSchedMode('existing')">Selecionar existente</button>
-            <button class="fx-mode-btn" id="sched-mode-new" onclick="fxSchedMode('new')">Criar novo</button>
-          </div>
-          <div id="sched-body"></div>
-        </div>`);
+            <h3 class="fx-modal-title">Adicionar em ${esc(day)}${fxSchedWeekOffset ? ' (semana seguinte)' : ''}</h3>
+            <div class="fx-mode-switch">
+              <button class="fx-mode-btn active" id="sched-mode-existing" onclick="fxSchedMode('existing')">Selecionar existente</button>
+              <button class="fx-mode-btn" id="sched-mode-new" onclick="fxSchedMode('new')">Criar novo</button>
+            </div>
+            <div id="sched-body"></div>
+          </div>`);
     fxSchedMode('existing');
   }
 
@@ -2056,21 +2416,21 @@
         return `<optgroup label="${label}">${items.map(i => `<option value="${cat}|${i.id}">${esc(i.title)}</option>`).join('')}</optgroup>`;
       }).join('');
       body.innerHTML = `
-            <label class="fx-field-label">Item existente</label>
-            <select class="fx-select" id="sched-existing-select" style="width:100%">${opts || '<option>Nenhum item cadastrado ainda</option>'}</select>
-            <div class="fx-modal-actions">
-              <button class="fx-btn" onclick="fxAddScheduleExisting()">Adicionar</button>
-              <button class="fx-btn-ghost fx-btn" onclick="fxCloseModal()">Cancelar</button>
-            </div>`;
+              <label class="fx-field-label">Item existente</label>
+              <select class="fx-select" id="sched-existing-select" style="width:100%">${opts || '<option>Nenhum item cadastrado ainda</option>'}</select>
+              <div class="fx-modal-actions">
+                <button class="fx-btn" onclick="fxAddScheduleExisting()">Adicionar</button>
+                <button class="fx-btn-ghost fx-btn" onclick="fxCloseModal()">Cancelar</button>
+              </div>`;
     } else {
       body.innerHTML = `
-            <label class="fx-field-label">Adicionar em qual catálogo?</label>
-            <select class="fx-select" id="sched-new-catalog" style="width:100%;margin-bottom:12px" onchange="fxSchedNewFields()">
-              <option value="sponsored">Patrocinados</option>
-              <option value="watched">Assistidos</option>
-              <option value="games">Jogados</option>
-            </select>
-            <div id="sched-new-fields"></div>`;
+              <label class="fx-field-label">Adicionar em qual catálogo?</label>
+              <select class="fx-select" id="sched-new-catalog" style="width:100%;margin-bottom:12px" onchange="fxSchedNewFields()">
+                <option value="sponsored">Patrocinados</option>
+                <option value="watched">Assistidos</option>
+                <option value="games">Jogados</option>
+              </select>
+              <div id="sched-new-fields"></div>`;
       fxSchedNewFields();
     }
   }
@@ -2079,10 +2439,10 @@
     const cat = document.getElementById('sched-new-catalog').value;
     const el = document.getElementById('sched-new-fields');
     el.innerHTML = fxFormFieldsHtml(cat, {}) + `
-          <div class="fx-modal-actions">
-            <button class="fx-btn" onclick="fxAddScheduleNew()">Criar e adicionar</button>
-            <button class="fx-btn-ghost fx-btn" onclick="fxCloseModal()">Cancelar</button>
-          </div>`;
+            <div class="fx-modal-actions">
+              <button class="fx-btn" onclick="fxAddScheduleNew()">Criar e adicionar</button>
+              <button class="fx-btn-ghost fx-btn" onclick="fxCloseModal()">Cancelar</button>
+            </div>`;
   }
 
   function fxAddScheduleExisting() {
@@ -2147,43 +2507,43 @@
     if (catalog === 'sponsored') {
       const showEp = d.type === 'Série' || d.type === 'Anime';
       return `<div class="fx-form-grid">
-            <div class="fx-form-full"><label class="fx-field-label">Título</label><input class="fx-input" autocomplete="off" id="f-title" value="${esc(d.title||'')}"></div>
-            <div class="fx-form-full"><label class="fx-field-label">Imagem (URL)</label><input class="fx-input" autocomplete="off" id="f-image" value="${esc(d.image||'')}"></div>
-            <div class="fx-form-full" style="margin-top:-4px"><input type="file" accept="image/*" class="fx-input" autocomplete="off" style="width:100%;font-size:12px;padding:6px" onchange="fxImageFileToInput(this,'f-image')"><span style="font-size:11px;color:var(--text-3)">ou envie uma imagem do computador (comprimida automaticamente)</span></div>
-            <div><label class="fx-field-label">Tipo</label><select class="fx-select" id="f-type" onchange="fxToggleSponsoredEpisodeFields()">${['Filme','Série','Anime','Jogo'].map(t=>`<option${d.type===t?' selected':''}>${t}</option>`).join('')}</select></div>
-            <div><label class="fx-field-label">Ano</label><input class="fx-input" autocomplete="off" type="number" id="f-year" value="${esc(d.year||'')}"></div>
-            <div id="f-sponsored-ep-1" style="display:${showEp?'block':'none'}"><label class="fx-field-label">Episódios patrocinados</label><input class="fx-input" autocomplete="off" type="number" id="f-sponsoredEpisodes" value="${esc(d.sponsoredEpisodes||'')}"></div>
-            <div id="f-sponsored-ep-2" style="display:${showEp?'block':'none'}"><label class="fx-field-label">Total de episódios</label><input class="fx-input" autocomplete="off" type="number" id="f-totalEpisodes" value="${esc(d.totalEpisodes||'')}"></div>
-            <div class="fx-form-full"><label class="fx-field-label">Patrocinado por</label><input class="fx-input" autocomplete="off" id="f-sponsor" value="${esc(d.sponsor||'')}"></div>
-            <div class="fx-form-full"><label class="fx-field-label">Sinopse</label><textarea class="fx-input" autocomplete="off" rows="3" id="f-sinopse">${esc(d.sinopse||'')}</textarea></div>
-          </div>`;
+              <div class="fx-form-full"><label class="fx-field-label">Título</label><input class="fx-input" autocomplete="off" id="f-title" value="${esc(d.title||'')}"></div>
+              <div class="fx-form-full"><label class="fx-field-label">Imagem (URL)</label><input class="fx-input" autocomplete="off" id="f-image" value="${esc(d.image||'')}"></div>
+              <div class="fx-form-full" style="margin-top:-4px"><input type="file" accept="image/*" class="fx-input" autocomplete="off" style="width:100%;font-size:12px;padding:6px" onchange="fxImageFileToInput(this,'f-image')"><span style="font-size:11px;color:var(--text-3)">ou envie uma imagem do computador (comprimida automaticamente)</span></div>
+              <div><label class="fx-field-label">Tipo</label><select class="fx-select" id="f-type" onchange="fxToggleSponsoredEpisodeFields()">${['Filme','Série','Anime','Jogo'].map(t=>`<option${d.type===t?' selected':''}>${t}</option>`).join('')}</select></div>
+              <div><label class="fx-field-label">Ano</label><input class="fx-input" autocomplete="off" type="number" id="f-year" value="${esc(d.year||'')}"></div>
+              <div id="f-sponsored-ep-1" style="display:${showEp?'block':'none'}"><label class="fx-field-label">Episódios patrocinados</label><input class="fx-input" autocomplete="off" type="number" id="f-sponsoredEpisodes" value="${esc(d.sponsoredEpisodes||'')}"></div>
+              <div id="f-sponsored-ep-2" style="display:${showEp?'block':'none'}"><label class="fx-field-label">Total de episódios</label><input class="fx-input" autocomplete="off" type="number" id="f-totalEpisodes" value="${esc(d.totalEpisodes||'')}"></div>
+              <div class="fx-form-full"><label class="fx-field-label">Patrocinado por</label><input class="fx-input" autocomplete="off" id="f-sponsor" value="${esc(d.sponsor||'')}"></div>
+              <div class="fx-form-full"><label class="fx-field-label">Sinopse</label><textarea class="fx-input" autocomplete="off" rows="3" id="f-sinopse">${esc(d.sinopse||'')}</textarea></div>
+            </div>`;
     }
     if (catalog === 'watched') {
       return `<div class="fx-form-grid">
-            <div class="fx-form-full"><label class="fx-field-label">Título</label><input class="fx-input" autocomplete="off" id="f-title" value="${esc(d.title||'')}"></div>
-            <div class="fx-form-full"><label class="fx-field-label">Imagem (URL)</label><input class="fx-input" autocomplete="off" id="f-image" value="${esc(d.image||'')}"></div>
-            <div class="fx-form-full" style="margin-top:-4px"><input type="file" accept="image/*" class="fx-input" autocomplete="off" style="width:100%;font-size:12px;padding:6px" onchange="fxImageFileToInput(this,'f-image')"><span style="font-size:11px;color:var(--text-3)">ou envie uma imagem do computador (comprimida automaticamente)</span></div>
-            <div><label class="fx-field-label">Tipo</label><select class="fx-select" id="f-type">${['Filme','Série','Anime'].map(t=>`<option${d.type===t?' selected':''}>${t}</option>`).join('')}</select></div>
-            <div><label class="fx-field-label">Ano</label><input class="fx-input" autocomplete="off" type="number" id="f-year" value="${esc(d.year||'')}"></div>
-            <div class="fx-form-full"><label class="fx-field-label">Status</label><select class="fx-select" id="f-status">${['Assistido','Assistindo','Incompleto','Pausado','Quero assistir'].map(t=>`<option${d.status===t?' selected':''}>${t}</option>`).join('')}</select></div>
-            <div><label class="fx-field-label">Temporada atual</label><input class="fx-input" autocomplete="off" type="number" id="f-season" value="${esc(d.season||'')}"></div>
-            <div><label class="fx-field-label">Total de temporadas</label><input class="fx-input" autocomplete="off" type="number" id="f-totalSeasons" value="${esc(d.totalSeasons||'')}"></div>
-            <div><label class="fx-field-label">Episódio atual</label><input class="fx-input" autocomplete="off" type="number" id="f-episode" value="${esc(d.episode||'')}"></div>
-            <div><label class="fx-field-label">Total de episódios</label><input class="fx-input" autocomplete="off" type="number" id="f-totalEpisodes" value="${esc(d.totalEpisodes||'')}"></div>
-            <div class="fx-form-full"><label class="fx-field-label">Sinopse</label><textarea class="fx-input" autocomplete="off" rows="3" id="f-sinopse">${esc(d.sinopse||'')}</textarea></div>
-          </div>`;
+              <div class="fx-form-full"><label class="fx-field-label">Título</label><input class="fx-input" autocomplete="off" id="f-title" value="${esc(d.title||'')}"></div>
+              <div class="fx-form-full"><label class="fx-field-label">Imagem (URL)</label><input class="fx-input" autocomplete="off" id="f-image" value="${esc(d.image||'')}"></div>
+              <div class="fx-form-full" style="margin-top:-4px"><input type="file" accept="image/*" class="fx-input" autocomplete="off" style="width:100%;font-size:12px;padding:6px" onchange="fxImageFileToInput(this,'f-image')"><span style="font-size:11px;color:var(--text-3)">ou envie uma imagem do computador (comprimida automaticamente)</span></div>
+              <div><label class="fx-field-label">Tipo</label><select class="fx-select" id="f-type">${['Filme','Série','Anime'].map(t=>`<option${d.type===t?' selected':''}>${t}</option>`).join('')}</select></div>
+              <div><label class="fx-field-label">Ano</label><input class="fx-input" autocomplete="off" type="number" id="f-year" value="${esc(d.year||'')}"></div>
+              <div class="fx-form-full"><label class="fx-field-label">Status</label><select class="fx-select" id="f-status">${['Assistido','Assistindo','Incompleto','Pausado','Quero assistir'].map(t=>`<option${d.status===t?' selected':''}>${t}</option>`).join('')}</select></div>
+              <div><label class="fx-field-label">Temporada atual</label><input class="fx-input" autocomplete="off" type="number" id="f-season" value="${esc(d.season||'')}"></div>
+              <div><label class="fx-field-label">Total de temporadas</label><input class="fx-input" autocomplete="off" type="number" id="f-totalSeasons" value="${esc(d.totalSeasons||'')}"></div>
+              <div><label class="fx-field-label">Episódio atual</label><input class="fx-input" autocomplete="off" type="number" id="f-episode" value="${esc(d.episode||'')}"></div>
+              <div><label class="fx-field-label">Total de episódios</label><input class="fx-input" autocomplete="off" type="number" id="f-totalEpisodes" value="${esc(d.totalEpisodes||'')}"></div>
+              <div class="fx-form-full"><label class="fx-field-label">Sinopse</label><textarea class="fx-input" autocomplete="off" rows="3" id="f-sinopse">${esc(d.sinopse||'')}</textarea></div>
+            </div>`;
     }
     if (catalog === 'games') {
       return `<div class="fx-form-grid">
-            <div class="fx-form-full"><label class="fx-field-label">Título</label><input class="fx-input" autocomplete="off" id="f-title" value="${esc(d.title||'')}"></div>
-            <div class="fx-form-full"><label class="fx-field-label">Imagem (URL)</label><input class="fx-input" autocomplete="off" id="f-image" value="${esc(d.image||'')}"></div>
-            <div class="fx-form-full" style="margin-top:-4px"><input type="file" accept="image/*" class="fx-input" autocomplete="off" style="width:100%;font-size:12px;padding:6px" onchange="fxImageFileToInput(this,'f-image')"><span style="font-size:11px;color:var(--text-3)">ou envie uma imagem do computador (comprimida automaticamente)</span></div>
-            <div><label class="fx-field-label">Ano</label><input class="fx-input" autocomplete="off" type="number" id="f-year" value="${esc(d.year||'')}"></div>
-            <div><label class="fx-field-label">Horas jogadas</label><input class="fx-input" autocomplete="off" type="number" id="f-hours" value="${esc(d.hours||'')}"></div>
-            <div class="fx-form-full"><label class="fx-field-label">Tag (opcional)</label><select class="fx-select" id="f-status" style="width:100%"><option value=""${!d.status?' selected':''}>Sem tag</option>${GAME_TAGS.map(t=>`<option${d.status===t?' selected':''}>${t}</option>`).join('')}</select></div>
-            <div class="fx-form-full"><label class="fx-field-label">Link da playlist / vídeos</label><input class="fx-input" autocomplete="off" id="f-link" value="${esc(d.link||'')}"></div>
-            <div class="fx-form-full"><label class="fx-field-label">Sinopse</label><textarea class="fx-input" autocomplete="off" rows="3" id="f-sinopse">${esc(d.sinopse||'')}</textarea></div>
-          </div>`;
+              <div class="fx-form-full"><label class="fx-field-label">Título</label><input class="fx-input" autocomplete="off" id="f-title" value="${esc(d.title||'')}"></div>
+              <div class="fx-form-full"><label class="fx-field-label">Imagem (URL)</label><input class="fx-input" autocomplete="off" id="f-image" value="${esc(d.image||'')}"></div>
+              <div class="fx-form-full" style="margin-top:-4px"><input type="file" accept="image/*" class="fx-input" autocomplete="off" style="width:100%;font-size:12px;padding:6px" onchange="fxImageFileToInput(this,'f-image')"><span style="font-size:11px;color:var(--text-3)">ou envie uma imagem do computador (comprimida automaticamente)</span></div>
+              <div><label class="fx-field-label">Ano</label><input class="fx-input" autocomplete="off" type="number" id="f-year" value="${esc(d.year||'')}"></div>
+              <div><label class="fx-field-label">Horas jogadas</label><input class="fx-input" autocomplete="off" type="number" id="f-hours" value="${esc(d.hours||'')}"></div>
+              <div class="fx-form-full"><label class="fx-field-label">Tag (opcional)</label><select class="fx-select" id="f-status" style="width:100%"><option value=""${!d.status?' selected':''}>Sem tag</option>${GAME_TAGS.map(t=>`<option${d.status===t?' selected':''}>${t}</option>`).join('')}</select></div>
+              <div class="fx-form-full"><label class="fx-field-label">Link da playlist / vídeos</label><input class="fx-input" autocomplete="off" id="f-link" value="${esc(d.link||'')}"></div>
+              <div class="fx-form-full"><label class="fx-field-label">Sinopse</label><textarea class="fx-input" autocomplete="off" rows="3" id="f-sinopse">${esc(d.sinopse||'')}</textarea></div>
+            </div>`;
     }
     // content
     const linkOpts = [...state.watched.map(i => ({
@@ -2194,21 +2554,22 @@
       cat: 'games'
     }))];
     return `<div class="fx-form-grid">
-          <div class="fx-form-full"><label class="fx-field-label">Título</label><input class="fx-input" autocomplete="off" id="f-title" value="${esc(d.title||'')}"></div>
-          <div class="fx-form-full"><label class="fx-field-label">Imagem (URL)</label><input class="fx-input" autocomplete="off" id="f-image" value="${esc(d.image||'')}"></div>
-            <div class="fx-form-full" style="margin-top:-4px"><input type="file" accept="image/*" class="fx-input" autocomplete="off" style="width:100%;font-size:12px;padding:6px" onchange="fxImageFileToInput(this,'f-image')"><span style="font-size:11px;color:var(--text-3)">ou envie uma imagem do computador (comprimida automaticamente)</span></div>
-          <div class="fx-form-full"><label class="fx-field-label">Plataformas</label>
-            <div class="fx-platform-list" id="f-platforms">${state.platforms.map(p => `<label class="fx-platform-check"><input type="checkbox" value="${esc(p)}"${(d.platforms||[]).includes(p)?' checked':''}>${esc(p)}</label>`).join('')}</div>
-            <div class="fx-add-platform-row"><input class="fx-input" autocomplete="off" id="f-new-platform" placeholder="Nova plataforma" style="flex:1"><button class="fx-btn fx-btn-sm fx-btn-ghost" type="button" onclick="fxAddPlatformToForm()">+</button></div>
-          </div>
-          <div class="fx-form-full"><label class="fx-field-label">Status</label><select class="fx-select" id="f-status">${['Ideia','Em breve','Gravado','Edição','Finalizado'].map(t=>`<option${d.status===t?' selected':''}>${t}</option>`).join('')}</select></div>
-          <div class="fx-form-full"><label class="fx-field-label">Vincular a Assistido / Jogado (opcional)</label>
-            <select class="fx-select" id="f-link-ref" style="width:100%">
-              <option value="">Nenhum</option>
-              ${linkOpts.map(i => `<option value="${i.cat}|${i.id}"${(d.linkCat===i.cat&&d.linkId===i.id)?' selected':''}>${i.cat==='watched'?'Assistido':'Jogado'}  ${esc(i.title)}</option>`).join('')}
-            </select>
-          </div>
-        </div>`;
+            <div class="fx-form-full"><label class="fx-field-label">Título</label><input class="fx-input" autocomplete="off" id="f-title" value="${esc(d.title||'')}"></div>
+            <div class="fx-form-full"><label class="fx-field-label">Imagem (URL)</label><input class="fx-input" autocomplete="off" id="f-image" value="${esc(d.image||'')}"></div>
+              <div class="fx-form-full" style="margin-top:-4px"><input type="file" accept="image/*" class="fx-input" autocomplete="off" style="width:100%;font-size:12px;padding:6px" onchange="fxImageFileToInput(this,'f-image')"><span style="font-size:11px;color:var(--text-3)">ou envie uma imagem do computador (comprimida automaticamente)</span></div>
+            <div class="fx-form-full"><label class="fx-field-label">Plataformas</label>
+              <div class="fx-platform-list" id="f-platforms">${state.platforms.map(p => `<label class="fx-platform-check"><input type="checkbox" value="${esc(p)}"${(d.platforms||[]).includes(p)?' checked':''}>${esc(p)}</label>`).join('')}</div>
+              <div class="fx-add-platform-row"><input class="fx-input" autocomplete="off" id="f-new-platform" placeholder="Nova plataforma" style="flex:1"><button class="fx-btn fx-btn-sm fx-btn-ghost" type="button" onclick="fxAddPlatformToForm()">+</button></div>
+            </div>
+            <div class="fx-form-full"><label class="fx-field-label">Status</label><select class="fx-select" id="f-status">${['Ideia','Em breve','Gravado','Edição','Finalizado'].map(t=>`<option${d.status===t?' selected':''}>${t}</option>`).join('')}</select></div>
+          <div class="fx-form-full"><label class="fx-field-label">Anotações (roteiro, ideias, lembretes...)</label><textarea class="fx-input" autocomplete="off" rows="4" id="f-notes">${esc(d.notes||'')}</textarea></div>
+            <div class="fx-form-full"><label class="fx-field-label">Vincular a Assistido / Jogado (opcional)</label>
+              <select class="fx-select" id="f-link-ref" style="width:100%">
+                <option value="">Nenhum</option>
+                ${linkOpts.map(i => `<option value="${i.cat}|${i.id}"${(d.linkCat===i.cat&&d.linkId===i.id)?' selected':''}>${i.cat==='watched'?'Assistido':'Jogado'}  ${esc(i.title)}</option>`).join('')}
+              </select>
+            </div>
+          </div>`;
   }
 
   function fxToggleSponsoredEpisodeFields() {
@@ -2246,13 +2607,13 @@
       content: 'conteúdo'
     } [catalog];
     fxOpenModal(`<div class="fx-modal-body">
-          <h3 class="fx-modal-title">${id ? 'Editar' : 'Novo'} ${catLabel}</h3>
-          ${fxFormFieldsHtml(catalog, d)}
-          <div class="fx-modal-actions">
-            <button class="fx-btn" onclick="fxSubmitForm('${catalog}','${id||''}')">Salvar</button>
-            <button class="fx-btn-ghost fx-btn" onclick="fxCloseModal()">Cancelar</button>
-          </div>
-        </div>`);
+            <h3 class="fx-modal-title">${id ? 'Editar' : 'Novo'} ${catLabel}</h3>
+            ${fxFormFieldsHtml(catalog, d)}
+            <div class="fx-modal-actions">
+              <button class="fx-btn" onclick="fxSubmitForm('${catalog}','${id||''}')">Salvar</button>
+              <button class="fx-btn-ghost fx-btn" onclick="fxCloseModal()">Cancelar</button>
+            </div>
+          </div>`);
   }
 
   function fxCollectFormData(catalog, existingId) {
@@ -2305,6 +2666,7 @@
       ...base,
       platforms,
       status: g('f-status'),
+      notes: g('f-notes'),
       linkCat,
       linkId
     };
@@ -2350,10 +2712,10 @@
       if ((d.type === 'Série' || d.type === 'Anime') && d.totalEpisodes) {
         const pct = Math.min(100, Math.round(((+d.sponsoredEpisodes || 0) / (+d.totalEpisodes)) * 100));
         epBlock = `<div class="fx-progress-card">
-              <div class="fx-progress-top"><span class="fx-progress-label">Episódios patrocinados</span><span class="fx-progress-pct">${pct}%</span></div>
-              <div class="fx-progress-val" style="margin-bottom:8px">${d.sponsoredEpisodes||0} / ${d.totalEpisodes} episódios</div>
-              <div class="fx-progress-bar"><div class="fx-progress-fill" style="width:${pct}%"></div></div>
-            </div>`;
+                <div class="fx-progress-top"><span class="fx-progress-label">Episódios patrocinados</span><span class="fx-progress-pct">${pct}%</span></div>
+                <div class="fx-progress-val" style="margin-bottom:8px">${d.sponsoredEpisodes||0} / ${d.totalEpisodes} episódios</div>
+                <div class="fx-progress-bar"><div class="fx-progress-fill" style="width:${pct}%"></div></div>
+              </div>`;
       }
       extra = (d.sponsor ? `<div class="fx-sponsor-pill">Patrocinado por <b>${esc(d.sponsor)}</b></div>` : '') + epBlock;
     } else if (catalog === 'watched') {
@@ -2362,19 +2724,19 @@
       if (d.totalEpisodes) {
         const pct = Math.min(100, Math.round(((+d.episode || 0) / (+d.totalEpisodes)) * 100));
         extra = `<div class="fx-progress-card">
-              <div class="fx-progress-top"><span class="fx-progress-label">Progresso</span><span class="fx-progress-pct">${pct}%</span></div>
-              <div class="fx-progress-val" style="margin-bottom:8px">${d.episode||0} / ${d.totalEpisodes} episódios</div>
-              <div class="fx-progress-bar"><div class="fx-progress-fill" style="width:${pct}%"></div></div>
-              ${d.totalSeasons ? `<div class="fx-progress-season">Temporada ${d.season||1} de ${d.totalSeasons}</div>` : ''}
-            </div>`;
+                <div class="fx-progress-top"><span class="fx-progress-label">Progresso</span><span class="fx-progress-pct">${pct}%</span></div>
+                <div class="fx-progress-val" style="margin-bottom:8px">${d.episode||0} / ${d.totalEpisodes} episódios</div>
+                <div class="fx-progress-bar"><div class="fx-progress-fill" style="width:${pct}%"></div></div>
+                ${d.totalSeasons ? `<div class="fx-progress-season">Temporada ${d.season||1} de ${d.totalSeasons}</div>` : ''}
+              </div>`;
       }
     } else if (catalog === 'games') {
       tags = d.status ?
         `${fxBadge(d.status, STATUS_COLORS[d.status] || '#83818E')}<span class="fx-modal-meta-sep"></span><span>${esc(d.year||'')}</span>` :
         `<span>${esc(d.year||'')}</span>`;
       extra = `<div class="fx-modal-stat-row">
-            <div class="fx-stat-box"><div class="fx-stat-box-label">Horas transmitidas</div><div class="fx-stat-box-val">${esc(d.hours||0)}h</div></div>
-          </div>` + (d.link ?
+              <div class="fx-stat-box"><div class="fx-stat-box-label">Horas transmitidas</div><div class="fx-stat-box-val">${esc(d.hours||0)}h</div></div>
+            </div>` + (d.link ?
         `<a class="fx-modal-link" href="${esc(d.link)}" target="_blank">${ICON.ext} Ver playlist / vídeos</a><br>` : '');
     } else {
       // content
@@ -2383,25 +2745,29 @@
       if (d.linkCat && d.linkId) {
         const ref = fxCatalogById(d.linkCat, d.linkId);
         if (ref) extra = `<div class="fx-linked-ref" onclick="fxOpenDetail('${d.linkCat}','${ref.id}')">
-              ${fxImgTag(ref.image, '', 'fx-linked-ref-noimg')}
-              <div><div class="fx-linked-ref-name">${esc(ref.title)}</div><div class="fx-linked-ref-type">${d.linkCat==='watched'?'Assistido':'Jogado'}</div></div>
-            </div>`;
+                ${fxImgTag(ref.image, '', 'fx-linked-ref-noimg')}
+                <div><div class="fx-linked-ref-name">${esc(ref.title)}</div><div class="fx-linked-ref-type">${d.linkCat==='watched'?'Assistido':'Jogado'}</div></div>
+              </div>`;
+      }
+      if (d.notes) {
+        sinopseBlock =
+          `<div class="fx-modal-sinopse-label">${ICON.note} Anotações</div><div class="fx-modal-sinopse">${esc(d.notes)}</div>`;
       }
     }
 
     const actionsHtml = fxIsAdmin() ? `<div class="fx-modal-actions">
-              <button class="fx-btn-ghost fx-btn" onclick="fxOpenForm('${catalog}','${d.id}')">${ICON.edit} Editar</button>
-              <button class="fx-btn-danger fx-btn" onclick="fxDeleteItem('${catalog}','${d.id}')">${ICON.trash} Remover</button>
-            </div>` : '';
+                <button class="fx-btn-ghost fx-btn" onclick="fxOpenForm('${catalog}','${d.id}')">${ICON.edit} Editar</button>
+                <button class="fx-btn-danger fx-btn" onclick="fxDeleteItem('${catalog}','${d.id}')">${ICON.trash} Remover</button>
+              </div>` : '';
 
     fxOpenModal(`<div class="fx-modal-hero">${heroImg}<button class="fx-modal-close" onclick="fxCloseModal()">${ICON.x}</button></div>
-          <div class="fx-modal-body">
-            <h3 class="fx-modal-title">${esc(d.title)}</h3>
-            <div class="fx-modal-tags">${tags}</div>
-            ${extra}
-            ${sinopseBlock}
-            ${actionsHtml}
-          </div>`);
+            <div class="fx-modal-body">
+              <h3 class="fx-modal-title">${esc(d.title)}</h3>
+              <div class="fx-modal-tags">${tags}</div>
+              ${extra}
+              ${sinopseBlock}
+              ${actionsHtml}
+            </div>`);
   }
 
   /** Mostra um estado de carregamento sutil assim que a página abre, antes dos
